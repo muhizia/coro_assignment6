@@ -1,4 +1,4 @@
-(in-package :pp-tut)
+
 (defparameter *base-pose-near-table*
   (make-pose "map" '((-1.447 -0.15 0.0) (0.0 0.0 -0.7071 0.7071))))
  
@@ -104,7 +104,7 @@
              ;; This will get executed when there are no more elements in the 
              ;; ?possible-grasps list. We print the error message and throw a new error
              ;; which will be caught by the outer handle-failure
-             (print  "No more grasp retries left :( :) ")
+             (print  "No more grasp retries left :(")
              (cpl:fail 'object-unreachable)))
  
         ;; This is the failure management of the outer handle-failure call
@@ -126,12 +126,40 @@
 (defun move-bottle (bottle-spawn-pose)
   (spawn-object bottle-spawn-pose)
   (with-simulated-robot
-    (find-object-with-base-movement)
-    (perform (a motion
-                    (type moving-torso) 
-                    (joint-angle 0.3)))
-    (park-arms))
-    )
+    ; (let ((?navigation-goal *base-pose-near-table*))
+    ;   (cpl:par
+    ;     ;; Moving the robot near the table.
+    ;     (perform (an action
+    ;                  (type going)
+    ;                  (target (a location 
+    ;                             (pose ?navigation-goal)))))
+    ;     (perform (a motion
+    ;                 (type moving-torso) 
+    ;                 (joint-angle 0.3)))
+    ;     (park-arms))
+    (find-object-with-base-movement
+     )
+ 
+    (let ((?perceived-bottle (find-object :bottle))
+          (?grasping-arm :right))
+      ;; We update the value of ?grasping-arm according to what the method used
+      (setf ?grasping-arm (pick-up-object ?perceived-bottle ?grasping-arm))
+      (park-arm ?grasping-arm)
+      ;; Moving the robot near the counter.
+      (let ((?nav-goal *base-pose-near-counter*))
+        (perform (an action
+                     (type going)
+                     (target (a location 
+                                (pose ?nav-goal))))))
+       ;; Setting the object down on the counter
+      (let ((?drop-pose *final-object-destination*))
+        (perform (an action
+                     (type placing)
+                     (arm ?grasping-arm)
+                     (object ?perceived-bottle)
+                     (target (a location 
+                                (pose ?drop-pose))))))
+      (park-arm ?grasping-arm))))
 
 ; find-object
 (defun find-object-with-base-movement ()
@@ -144,7 +172,6 @@
                      (type going)
                      (target (a location 
                                 (pose ?looking-location)))))
-    (perceive-bottle)
     ;; perception-object-not-found is the error that we get when the robot cannot find the object.
     ;; Now we're wrapping it in a failure handling clause to handle it
     (handle-failure perception-object-not-found
@@ -162,32 +189,13 @@
                      (type going)
                      (target (a location 
                                 (pose ?looking-location)))))
-        (perceive-bottle)
         ;; This statement retries the action again
         (cpl:retry))
       ;; If everything else fails, error out
       ;; Reset the neck before erroring out     
-      (cpl:fail 'object-nowhere-to-be-found))
+      ; (cpl:fail 'object-nowhere-to-be-found))
+      (perform (a motion
+                    (type moving-torso) 
+                    (joint-angle 0.3)))
+        (park-arms)
       ))
-
-    (defun perceive-bottle()
-      (let ((?perceived-bottle (find-object :bottle))
-           (?grasping-arm :right))
-      ;; We update the value of ?grasping-arm according to what the method used
-      (setf ?grasping-arm (pick-up-object ?perceived-bottle ?grasping-arm))
-      (park-arm ?grasping-arm)
-      ;; Moving the robot near the counter.
-      (let ((?nav-goal *base-pose-near-counter*))
-          (perform (an action
-                      (type going)
-                      (target (a location 
-                                  (pose ?nav-goal))))))
-      ;; Setting the object down on the counter
-      (let ((?drop-pose *final-object-destination*))
-          (perform (an action
-                      (type placing)
-                      (arm ?grasping-arm)
-                      (object ?perceived-bottle)
-                      (target (a location 
-                                  (pose ?drop-pose))))))
-      (park-arm ?grasping-arm)))
