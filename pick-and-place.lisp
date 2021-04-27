@@ -126,23 +126,13 @@
 (defun move-bottle (bottle-spawn-pose)
   (spawn-object bottle-spawn-pose)
   (with-simulated-robot
-    ; (let ((?navigation-goal *base-pose-near-table*))
-    ;   (cpl:par
-    ;     ;; Moving the robot near the table.
-    ;     (perform (an action
-    ;                  (type going)
-    ;                  (target (a location 
-    ;                             (pose ?navigation-goal)))))
-    ;     (perform (a motion
-    ;                 (type moving-torso) 
-    ;                 (joint-angle 0.3)))
-    ;     (park-arms))
     (find-object-with-base-movement)
     (perform (a motion
                     (type moving-torso) 
                     (joint-angle 0.3)))
     (park-arms))
     )
+
 ; find-object
 (defun find-object-with-base-movement ()
   (let* ((possible-look-locations `(,*new-base-pose-near-counter*
