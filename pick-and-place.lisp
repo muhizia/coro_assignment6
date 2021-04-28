@@ -1,4 +1,5 @@
 
+
 (in-package :pp-tut)
 
 (defparameter *base-pose-near-table*
@@ -155,9 +156,9 @@
 
 (defun find-object-with-base-movement()
   (let* ((possible-look-locations `(,*base-pose-near-big-table*
-                                     ,*base-pose-near-big-table*)))
+                                     ,*base-pose-near-big-table*))
 
-    (setf ?looking-location (first possible-look-locations))
+    (?looking-location (first possible-look-locations)))
     (setf possible-look-locations (rest possible-look-locations))
     ;; Look towards the first direction
     
@@ -173,8 +174,8 @@
       (when possible-look-locations
         (print "Perception error happened! Turning head.")
         ;; Resetting the head to look forward before turning again
-        (setf ?looking-location (first ?possible-look-locations))
-        (setf ?possible-look-locations(rest ?possible-look-locations))
+        (setf ?looking-location (first possible-look-locations))
+        (setf possible-look-locations(rest possible-look-locations))
         (perform (an action
         (type going)(target (a location(pose ?looking-location)))))
         ;; This statement retries the action again
