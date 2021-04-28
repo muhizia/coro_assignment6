@@ -18,6 +18,8 @@
 (defparameter *right-downward-look-coordinate*
   (make-pose "base_footprint" '((0.65335 -0.76 0.758) (0 0 0 1))))
 
+(defparameter *base-pose-near-big-table*
+  (make-pose "map" '((-1.447 -0.15 0.0) (0.0 0.0 -0.7071 0.7071))))
 
 (defun move-bottle (bottle-spawn-pose)
   (spawn-object bottle-spawn-pose)
@@ -151,10 +153,10 @@
       (cpl:fail 'object-nowhere-to-be-found))))
 
 (defun find-object-with-base-movement()
-  (let* ((possible-look-locations `(,*downward-look-coordinate*
-                                     ,*left-downward-look-coordinate*))
+  (let* ((possible-look-locations `(,*base-pose-near-big-table*
+                                     ,*base-pose-near-big-table*)))
 
-    (setf ?looking-location (first possible-look-locations)))
+    (setf ?looking-location (first possible-look-locations))
     (setf possible-look-locations (rest possible-look-locations))
     ;; Look towards the first direction
     
