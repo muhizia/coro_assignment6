@@ -1,5 +1,4 @@
 
-
 (in-package :pp-tut)
 
 (defparameter *base-pose-near-table*
@@ -23,8 +22,11 @@
 (defparameter *base-pose-near-big-table*
   (make-pose "map" '((-0.15 2 0) (0 0 -1 0))))
 
-(defparameter *base-pose-small-table*
+(defparameter *base-pose-near-small-table*
   (make-pose "map" '((-1.447 -0.15 0.0) (0.0 0.0 -0.7071 0.7071))))
+
+(defparameter *base-pose-near-big-closer-table*
+  (make-pose "map" '((-0.15 1 0) (0 0 -1 0))))
 
 (defun move-bottle (bottle-spawn-pose)
   (spawn-object bottle-spawn-pose)
@@ -158,8 +160,9 @@
       (cpl:fail 'object-nowhere-to-be-found))))
 
 (defun find-object-with-base-movement()
-  (let* ((possible-look-locations `(,*base-pose-near-big-table*
-                                     ,*base-pose-near-small-table*))
+  (let* ((possible-look-locations `(,*base-pose-near-big-closer-table*
+                                    ,*base-pose-near-small-table*
+                                     ,*base-pose-near-big-table*))
 
     (?looking-location (first possible-look-locations)))
     (setf possible-look-locations (rest possible-look-locations))
@@ -174,7 +177,8 @@
  
       ;; If the action fails, try the following:
       ;; try different look directions until there is none left.
-      (when possible-look-locations
+      (when (or possible-look-locations object-unreachable)
+        
         (print "Perception error happened! Turning head.")
         ;; Resetting the head to look forward before turning again
         (setf ?looking-location (first possible-look-locations))
@@ -185,4 +189,4 @@
         (cpl:retry))
       ;; If everything else fails, error out
       ;; Reset the neck before erroring out      
-      (cpl:fail 'object-nowhere-to-be-found))))
+      (cpl:fail 'object-unreachable))))
