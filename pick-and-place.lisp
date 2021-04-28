@@ -1,3 +1,4 @@
+
 (in-package :pp-tut)
 
 (defparameter *base-pose-near-table*
