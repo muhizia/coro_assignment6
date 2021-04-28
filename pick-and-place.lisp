@@ -34,7 +34,7 @@
                     (joint-angle 0.3)))
         (park-arms)))
  
-    (let ((?perceived-bottle (find-object :bottle))
+    (let ((?perceived-bottle (find-object-with-base-movement))
           (?grasping-arm :right))
       ;; We update the value of ?grasping-arm according to what the method used
       (setf ?grasping-arm (pick-up-object ?perceived-bottle ?grasping-arm))
@@ -103,7 +103,7 @@
                                   :right))
           (cpl:retry))
         ;; When all retries are exhausted print the error message.
-        (print "No more arm change retries left :("))))
+        (print "No more arm change retries left :( :) "))))
   ?grasping-arm)
 
 (defun find-object (?object-type)
@@ -148,4 +148,34 @@
       (perform (an action
                    (type looking)
                    (direction forward)))      
+      (cpl:fail 'object-nowhere-to-be-found))))
+
+(defun find-object-with-base-movement()
+  (let* ((possible-look-locations `(,*downward-look-coordinate*
+                                     ,*left-downward-look-coordinate*))
+
+    (setf ?looking-location (first possible-look-locations)))
+    (setf possible-look-locations (rest possible-look-locations))
+    ;; Look towards the first direction
+    
+ 
+    ;; perception-object-not-found is the error that we get when the robot cannot find the object.
+    ;; Now we're wrapping it in a failure handling clause to handle it
+    (handle-failure object-nowhere-to-be-found
+        ;; Try the action
+        ((find-object :bottle))
+ 
+      ;; If the action fails, try the following:
+      ;; try different look directions until there is none left.
+      (when possible-look-locations
+        (print "Perception error happened! Turning head.")
+        ;; Resetting the head to look forward before turning again
+        (setf ?looking-location (first ?possible-look-locations))
+        (setf ?possible-look-locations(rest ?possible-look-locations))
+        (perform (an action
+        (type going)(target (a location(pose ?looking-location)))))
+        ;; This statement retries the action again
+        (cpl:retry))
+      ;; If everything else fails, error out
+      ;; Reset the neck before erroring out      
       (cpl:fail 'object-nowhere-to-be-found))))
