@@ -177,7 +177,7 @@
  
       ;; If the action fails, try the following:
       ;; try different look directions until there is none left.
-      (when (or possible-look-locations object-unreachable)
+      (when possible-look-locations
         
         (print "Perception error happened! Turning head.")
         ;; Resetting the head to look forward before turning again
