@@ -23,10 +23,10 @@
   (make-pose "map" '((-0.15 2 0) (0 0 -1 0))))
 
 (defparameter *base-pose-near-small-table*
-  (make-pose "map" '((-1.447 -0.15 0.0) (0.0 0.0 -0.7071 0.7071))))
+  (make-pose "map" '((-1.447d0 0.150d0 0.0d0) (0.0d0 0.0d0 0.7071d0 0.7071d0))))
 
 (defparameter *base-pose-near-big-closer-table*
-  (make-pose "map" '((-0.15 1 0) (0 0 -1 0))))
+  (make-pose "map" '((0.700000 0.650000 0.00000) (0.00000 0.00000 0 1))))
 
 (defun move-bottle (bottle-spawn-pose)
   (spawn-object bottle-spawn-pose)
@@ -160,12 +160,10 @@
       (cpl:fail 'object-nowhere-to-be-found))))
 
 (defun find-object-with-base-movement()
-  (let* ((possible-look-locations `(,*base-pose-near-big-closer-table*
-                                    ,*base-pose-near-small-table*
+  (let* ((possible-look-locations `(,*base-pose-near-big-table*
                                      ,*base-pose-near-big-table*))
 
     (?looking-location (first possible-look-locations)))
-    (setf possible-look-locations (rest possible-look-locations))
     ;; Look towards the first direction
     
  
@@ -189,4 +187,4 @@
         (cpl:retry))
       ;; If everything else fails, error out
       ;; Reset the neck before erroring out      
-      (cpl:fail 'object-unreachable))))
+      (cpl:fail 'object-confusing))))
