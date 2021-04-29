@@ -137,7 +137,7 @@
       (handle-failure perception-object-not-found
           ;; Try the action
         ;; If the action fails, try the following:
-        ;; try different look directions until there is none left.
+          ;; try different look directions until there is none left.
         (when possible-look-locations
           (print "Perception error happened! Turning head.")
           ;; Resetting the head to look forward before turning again
