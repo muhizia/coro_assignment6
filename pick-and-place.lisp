@@ -115,7 +115,7 @@
   (spawn-object bottle-spawn-pose)
   (with-simulated-robot
  
-    (let* ((possible-look-directions `(,*downward-look-coordinate*
+    (let* ((possible-look-locations `(,*downward-look-coordinate*
                                      ,*left-downward-look-coordinate*
                                      ,*right-downward-look-coordinate*))
          (?looking-location (first possible-look-locations)))
@@ -138,7 +138,7 @@
           ;; Try the action
         ;; If the action fails, try the following:
         ;; try different look directions until there is none left.
-        (when possible-look-directions
+        (when possible-look-locations
           (print "Perception error happened! Turning head.")
           ;; Resetting the head to look forward before turning again
           (setf ?looking-location (first possible-look-locations))
