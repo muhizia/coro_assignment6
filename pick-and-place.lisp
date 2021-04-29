@@ -114,18 +114,52 @@
 (defun move-bottle (bottle-spawn-pose)
   (spawn-object bottle-spawn-pose)
   (with-simulated-robot
-    (let ((?navigation-goal *base-pose-near-table*))
+ 
+    (let* ((possible-look-directions `(,*downward-look-coordinate*
+                                     ,*left-downward-look-coordinate*
+                                     ,*right-downward-look-coordinate*))
+         (?looking-location (first possible-look-locations)))
+      (setf possible-look-locations (rest possible-look-locations))
+      ;; Look towards the first direction
       (cpl:par
         ;; Moving the robot near the table.
         (perform (an action
                      (type going)
                      (target (a location 
-                                (pose ?navigation-goal)))))
+                                (pose ?looking-location)))))
         (perform (a motion
                     (type moving-torso) 
                     (joint-angle 0.3)))
-        (park-arms)))
- 
+        (park-arms))
+        (function-name)
+      ;; perception-object-not-found is the error that we get when the robot cannot find the object.
+      ;; Now we're wrapping it in a failure handling clause to handle it
+      (handle-failure perception-object-not-found
+          ;; Try the action
+        ;; If the action fails, try the following:
+        ;; try different look directions until there is none left.
+        (when possible-look-directions
+          (print "Perception error happened! Turning head.")
+          ;; Resetting the head to look forward before turning again
+          (setf ?looking-location (first possible-look-locations))
+          (setf possible-look-locations (rest possible-look-locations))
+          (perform (an action
+                     (type going)
+                     (target (a location 
+                                (pose ?looking-location)))))
+                                (function-name)
+          ;; This statement retries the action again
+          (cpl:retry))
+        ;; If everything else fails, error out
+        ;; Reset the neck before erroring out
+        (perform (an action
+                    (type looking)
+                    (direction forward)))      
+        (cpl:fail 'object-nowhere-to-be-found)))))
+
+
+
+(defun function-name ()
     (let ((?perceived-bottle (find-object :bottle))
           (?grasping-arm :right))
       ;; We update the value of ?grasping-arm according to what the method used
@@ -145,4 +179,4 @@
                      (object ?perceived-bottle)
                      (target (a location 
                                 (pose ?drop-pose))))))
-      (park-arm ?grasping-arm))))
+      (park-arm ?grasping-arm)))
