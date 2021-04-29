@@ -28,27 +28,7 @@
 (defparameter *base-pose-near-big-closer-table*
   (make-pose "map" '((0.700000 0.650000 0.00000) (0.00000 0.00000 0 1))))
 
-(defun perceived-object-fun()
-  (let ((?perceived-bottle (find-object :bottle))
-          (?grasping-arm :right))
-      ;; We update the value of ?grasping-arm according to what the method used
-      (setf ?grasping-arm (pick-up-object ?perceived-bottle ?grasping-arm))
-      (park-arm ?grasping-arm)
-      ;; Moving the robot near the counter.
-      (let ((?nav-goal *base-pose-near-counter*))
-        (perform (an action
-                     (type going)
-                     (target (a location 
-                                (pose ?nav-goal))))))
-       ;; Setting the object down on the counter
-      (let ((?drop-pose *final-object-destination*))
-        (perform (an action
-                     (type placing)
-                     (arm ?grasping-arm)
-                     (object ?perceived-bottle)
-                     (target (a location 
-                                (pose ?drop-pose))))))
-      (park-arm ?grasping-arm)))
+
 
 (defun move-bottle (bottle-spawn-pose)
   (spawn-object bottle-spawn-pose)
@@ -203,7 +183,26 @@
     ;; Now we're wrapping it in a failure handling clause to handle it
     (handle-failure object-nowhere-to-be-found
         ;; Try the action
-        (perceived-object-fun)
+        (let ((?perceived-bottle (find-object :bottle))
+          (?grasping-arm :right))
+      ;; We update the value of ?grasping-arm according to what the method used
+      (setf ?grasping-arm (pick-up-object ?perceived-bottle ?grasping-arm))
+      (park-arm ?grasping-arm)
+      ;; Moving the robot near the counter.
+      (let ((?nav-goal *base-pose-near-counter*))
+        (perform (an action
+                     (type going)
+                     (target (a location 
+                                (pose ?nav-goal))))))
+       ;; Setting the object down on the counter
+      (let ((?drop-pose *final-object-destination*))
+        (perform (an action
+                     (type placing)
+                     (arm ?grasping-arm)
+                     (object ?perceived-bottle)
+                     (target (a location 
+                                (pose ?drop-pose))))))
+      (park-arm ?grasping-arm))
       ;; If the action fails, try the following:
       ;; try different look directions until there is none left.
       (when possible-look-locations
@@ -211,7 +210,26 @@
         ;; Resetting the head to look forward before turning again
         (setf ?looking-location (first possible-look-locations))
         (setf possible-look-locations (rest possible-look-locations))
-        (perceived-object-fun)
+        (let ((?perceived-bottle (find-object :bottle))
+          (?grasping-arm :right))
+      ;; We update the value of ?grasping-arm according to what the method used
+      (setf ?grasping-arm (pick-up-object ?perceived-bottle ?grasping-arm))
+      (park-arm ?grasping-arm)
+      ;; Moving the robot near the counter.
+      (let ((?nav-goal *base-pose-near-counter*))
+        (perform (an action
+                     (type going)
+                     (target (a location 
+                                (pose ?nav-goal))))))
+       ;; Setting the object down on the counter
+      (let ((?drop-pose *final-object-destination*))
+        (perform (an action
+                     (type placing)
+                     (arm ?grasping-arm)
+                     (object ?perceived-bottle)
+                     (target (a location 
+                                (pose ?drop-pose))))))
+      (park-arm ?grasping-arm))
         ;; This statement retries the action again
         (cpl:retry))
       ;; If everything else fails, error out
