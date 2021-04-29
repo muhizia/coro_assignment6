@@ -186,7 +186,7 @@
     ;; Now we're wrapping it in a failure handling clause to handle it
     (handle-failure (or object-nowhere-to-be-found object-unreachable)
         ;; Try the action
-        (perceive-bottle())
+        (perceive-bottle)
       ;; If the action fails, try the following:
       ;; try different look directions until there is none left.
       (when possible-look-locations
@@ -194,7 +194,7 @@
         ;; Resetting the head to look forward before turning again
         (setf ?looking-location (first possible-look-locations))
         (setf possible-look-locations (rest possible-look-locations))
-        (perceive-bottle())
+        (perceive-bottle)
         ;; This statement retries the action again
         (cpl:retry))
       ;; If everything else fails, error out
