@@ -28,15 +28,32 @@
 (defparameter *base-pose-near-big-closer-table*
   (make-pose "map" '((0.700000 0.650000 0.00000) (0.00000 0.00000 0 1))))
 
+(defun perceived-object-fun()
+  (let ((?perceived-bottle (find-object :bottle))
+          (?grasping-arm :right))
+      ;; We update the value of ?grasping-arm according to what the method used
+      (setf ?grasping-arm (pick-up-object ?perceived-bottle ?grasping-arm))
+      (park-arm ?grasping-arm)
+      ;; Moving the robot near the counter.
+      (let ((?nav-goal *base-pose-near-counter*))
+        (perform (an action
+                     (type going)
+                     (target (a location 
+                                (pose ?nav-goal))))))
+       ;; Setting the object down on the counter
+      (let ((?drop-pose *final-object-destination*))
+        (perform (an action
+                     (type placing)
+                     (arm ?grasping-arm)
+                     (object ?perceived-bottle)
+                     (target (a location 
+                                (pose ?drop-pose))))))
+      (park-arm ?grasping-arm)))
+
 (defun move-bottle (bottle-spawn-pose)
   (spawn-object bottle-spawn-pose)
   (with-simulated-robot
       (cpl:par
-        ;; Moving the robot near the table.
-        (perform (an action
-                     (type going)
-                     (target (a location 
-                                (pose ?navigation-goal)))))
         (perform (a motion
                     (type moving-torso) 
                     (joint-angle 0.3)))
@@ -184,9 +201,9 @@
  
     ;; perception-object-not-found is the error that we get when the robot cannot find the object.
     ;; Now we're wrapping it in a failure handling clause to handle it
-    (handle-failure (or object-nowhere-to-be-found object-unreachable)
+    (handle-failure object-nowhere-to-be-found
         ;; Try the action
-        (perceive-bottle)
+        (perceived-object-fun)
       ;; If the action fails, try the following:
       ;; try different look directions until there is none left.
       (when possible-look-locations
@@ -194,31 +211,9 @@
         ;; Resetting the head to look forward before turning again
         (setf ?looking-location (first possible-look-locations))
         (setf possible-look-locations (rest possible-look-locations))
-        (perceive-bottle)
+        (perceived-object-fun)
         ;; This statement retries the action again
         (cpl:retry))
       ;; If everything else fails, error out
       ;; Reset the neck before erroring out      
       (cpl:fail 'object-nowhere-to-be-found))))
-
-(defun perceive-bottle()
-  (let ((?perceived-bottle (find-object :bottle))
-          (?grasping-arm :right))
-      ;; We update the value of ?grasping-arm according to what the method used
-      (setf ?grasping-arm (pick-up-object ?perceived-bottle ?grasping-arm))
-      (park-arm ?grasping-arm)
-      ;; Moving the robot near the counter.
-      (let ((?nav-goal *base-pose-near-counter*))
-        (perform (an action
-                     (type going)
-                     (target (a location 
-                                (pose ?nav-goal))))))
-       ;; Setting the object down on the counter
-      (let ((?drop-pose *final-object-destination*))
-        (perform (an action
-                     (type placing)
-                     (arm ?grasping-arm)
-                     (object ?perceived-bottle)
-                     (target (a location 
-                                (pose ?drop-pose))))))
-      (park-arm ?grasping-arm)))
