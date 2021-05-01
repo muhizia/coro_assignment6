@@ -194,7 +194,7 @@
                                 (pose ?drop-pose))))))
       (park-arm ?grasping-arm))))
 
-(perceive-bottle ()
+(defun perceive-bottle ()
 (let ((?possible-base-poses `(,*base-pose-near-table-towards-island*
                                           ,*base-pose-near-sink-surface*))
                   (?current-base-pose *base-pose-near-table*))
