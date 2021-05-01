@@ -159,7 +159,8 @@
   (spawn-object bottle-spawn-pose)
   (with-simulated-robot
       (cpl:par
-       
+        ;; Moving the robot near the table.
+        
         (perform (a motion
                     (type moving-torso) 
                     (joint-angle 0.3)))
@@ -188,11 +189,13 @@
       (park-arm ?grasping-arm))))
 
 (defun perceive-bottle ()
-(let ((?possible-base-poses `(,*base-pose-near-table*
-                                ,*base-pose-near-table-towards-island*
+(let ((?possible-base-poses `(,*base-pose-near-table-towards-island*
                                           ,*base-pose-near-sink-surface*))
                   (?current-base-pose *base-pose-near-table*))
- 
+                  (perform (an action
+                     (type going)
+                     (target (a location 
+                                (pose ?current-base-pose)))))
               (handle-failure (or object-nowhere-to-be-found
                                   object-unreachable)
  
