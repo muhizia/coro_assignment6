@@ -158,21 +158,14 @@
 (defun move-bottle1 (bottle-spawn-pose)
   (spawn-object bottle-spawn-pose)
   (with-simulated-robot
-    (let ((?navigation-goal *base-pose-near-table*))
       (cpl:par
-        ;; Moving the robot near the table.
-        (perform (an action
-                     (type going)
-                     (target (a location 
-                                (pose ?navigation-goal)))))
+       
         (perform (a motion
                     (type moving-torso) 
                     (joint-angle 0.3)))
-        (park-arms)))
+        (park-arms))
  
-    (let ((?perceived-bottle
- 
-            (perceive-bottle))
+    (let ((?perceived-bottle (perceive-bottle))
  
           (?grasping-arm :right))
       ;; We update the value of ?grasping-arm according to what the method used
@@ -195,7 +188,8 @@
       (park-arm ?grasping-arm))))
 
 (defun perceive-bottle ()
-(let ((?possible-base-poses `(,*base-pose-near-table-towards-island*
+(let ((?possible-base-poses `(,*base-pose-near-table*
+                                ,*base-pose-near-table-towards-island*
                                           ,*base-pose-near-sink-surface*))
                   (?current-base-pose *base-pose-near-table*))
  
