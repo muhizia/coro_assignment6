@@ -90,7 +90,8 @@
                (park-arms)
                (cpl:retry))
              ;; This will get executed when there are no more elements in the 
-             ;; ?possible-grasps list. We print the error message and throw a new error
+             ;; ?possible-grasps list. We print the error message and throw
+             ;; a new error
              ;; which will be caught by the outer handle-failure
              (print  "No more grasp retries left :(")
              (cpl:fail 'object-unreachable)))
@@ -100,7 +101,8 @@
         (print "Manipulation failed!!")
         (print e)
  
-        ;; Here we use the retry counter we defined. The value is decremented automatically
+        ;; Here we use the retry counter we defined.
+        ;; The value is decremented automatically
         (cpl:do-retry arm-change-retry
           ;; if the current grasping arm is right set left, else set right
           (setf ?grasping-arm (if (eq ?grasping-arm :right) 
@@ -121,7 +123,6 @@
          (?looking-location (first possible-look-locations)))
       (setf possible-look-locations (rest possible-look-locations))
       ;; Look towards the first direction
-      (cpl:par
         ;; Moving the robot near the table.
         (perform (an action
                      (type going)
@@ -130,7 +131,7 @@
         (perform (a motion
                     (type moving-torso) 
                     (joint-angle 0.3)))
-        (park-arms))
+        (park-arms)
         (function-name)
       ;; perception-object-not-found is the error that we get when the robot cannot find the object.
       ;; Now we're wrapping it in a failure handling clause to handle it
