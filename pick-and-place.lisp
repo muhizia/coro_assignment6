@@ -16,6 +16,9 @@
 (defparameter *right-downward-look-coordinate*
   (make-pose "base_footprint" '((0.65335 -0.76 0.758) (0 0 0 1))))
 
+(defparameter *base-pose-near-and-next-counter*
+  (make-pose "map" '((-0.15 1 0) (0 0 -1 0))))
+
 (defun move-bottle (bottle-spawn-pose)
   (spawn-object bottle-spawn-pose)
   (with-simulated-robot
@@ -147,13 +150,6 @@
                    (type looking)
                    (direction forward)))      
       (cpl:fail 'object-nowhere-to-be-found))))
-
-
-(defparameter *base-pose-near-table-towards-island*
-  (make-pose "map" '((-1.447d0 0.150d0 0.0d0) (0.0d0 0.0d0 0.7071d0 0.7071d0))))
- 
-(defparameter *base-pose-near-sink-surface* 
-  (make-pose "map" '((0.700000 0.650000 0.00000) (0.00000 0.00000 0 1))))
  
 (defun move-bottle1 (bottle-spawn-pose)
   (spawn-object bottle-spawn-pose)
@@ -189,26 +185,24 @@
       (park-arm ?grasping-arm))))
 
 (defun perceive-bottle ()
-(let ((?possible-base-poses `(,*base-pose-near-table-towards-island*
-                                          ,*base-pose-near-sink-surface*))
-                  (?current-base-pose *base-pose-near-table*))
+(let ((?possible-look-directions `(,*base-pose-near-counter*
+                                          ,*base-pose-near-and-next-counter*))
+                  (?looking-location *base-pose-near-table*))
                   (perform (an action
                      (type going)
                      (target (a location 
-                                (pose ?current-base-pose)))))
+                                (pose ?looking-location)))))
               (handle-failure (or object-nowhere-to-be-found
                                   object-unreachable)
  
                   ((find-object :bottle))
  
-                (when (first ?possible-base-poses)
-                  (print "Changing the base to a new location to try finding the object")
-                  (setf ?current-base-pose (first ?possible-base-poses))
-                  (setf ?possible-base-poses (rest ?possible-base-poses))
+                (when (first ?possible-look-locations)
+                  (setf ?looking-location (first ?possible-look-locations))
+                  (setf ?possible-look-locations (rest ?possible-look-locations))
                   (perform (an action
                                (type going)
                                (target (a location
-                                          (pose ?current-base-pose)))))
+                                          (pose ?looking-location)))))
                   (cpl:retry))
-                (print "Exhausted all the locations to search. Cannot find the object")
                 (cpl:fail 'object-unreachable))))
