@@ -20,7 +20,7 @@
   (make-pose "map" '((-1.447 0.15 0.0) (0.0 0.0 0.7071 0.7071))))
 
 (defparameter *base-pose-near-and-next-counter*
-  (make-pose "map" '((-0.15 1 0) (0 0 -1 0))))
+  (make-pose "map" '((-0.3 1 0) (0 0 -1 0))))
 
 (defun move-bottle (bottle-spawn-pose)
   (spawn-object bottle-spawn-pose)
