@@ -165,10 +165,12 @@
                     (joint-angle 0.3)))
         (park-arms))
  
-    (let ((?perceived-bottle (perceive-bottle)))
+    (let ((?perceived-bottle (perceive-bottle))
+ 
+          (?grasping-arm :right))
       ;; We update the value of ?grasping-arm according to what the method used
-      ; (setf ?grasping-arm (pick-up-object ?perceived-bottle ?grasping-arm))
-      ; (park-arm ?grasping-arm)
+      (setf ?grasping-arm (pick-up-object ?perceived-bottle ?grasping-arm))
+      (park-arm ?grasping-arm)
       ;; Moving the robot near the counter.
       (let ((?nav-goal *base-pose-near-counter*))
         (perform (an action
@@ -186,7 +188,7 @@
       (park-arm ?grasping-arm))))
 
 (defun perceive-bottle ()
-(let ((?possible-look-locations `(,*base-pose-near-and-next-counter*))
+(let ((?possible-look-locations `(,*base-pose-near-counter* ,*base-pose-near-and-next-counter*))
                   (?looking-location *base-pose-near-table*))
                   (perform (an action
                      (type going)
@@ -205,11 +207,4 @@
                                (target (a location
                                           (pose ?looking-location)))))
                   (cpl:retry))
-
-                (let((?perceived-bottle (perceive-bottle))
- 
-                    (?grasping-arm :right))
-                ;; We update the value of ?grasping-arm according to what the method used
-                (setf ?grasping-arm (pick-up-object ?perceived-bottle ?grasping-arm))
-                (park-arm ?grasping-arm))
-                (cpl:fail 'object-unreachable))) ?perceived-bottle)
+                (cpl:fail 'object-unreachable))))
