@@ -20,7 +20,7 @@
   (make-pose "map" '((-1.447 0.15 0.0) (0.0 0.0 0.7071 0.7071))))
 
 (defparameter *base-pose-near-and-next-counter*
-  (make-pose "map" '((-0.15 1.5 0) (0 0 -1 0))))
+  (make-pose "map" '((-0.15 0.5 0) (0 0 -1 0))))
 
 (defun move-bottle (bottle-spawn-pose)
   (spawn-object bottle-spawn-pose)
@@ -90,7 +90,7 @@
              ;; This will get executed when there are no more elements in the 
              ;; ?possible-grasps list. We print the error message and throw a new error
              ;; which will be caught by the outer handle-failure
-             (print  "No more grasp retries left :(")
+             (print  "No more grasp retries left")
              (cpl:fail 'object-unreachable)))
  
         ;; This is the failure management of the outer handle-failure call
@@ -106,7 +106,7 @@
                                   :right))
           (cpl:retry))
         ;; When all retries are exhausted print the error message.
-        (print "No more arm change retries left :("))))
+        (print "No more arm change retries left"))))
   ?grasping-arm)
 
 
