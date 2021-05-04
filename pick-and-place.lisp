@@ -2,7 +2,7 @@
   (make-pose "map" '((-1.447 -0.15 0.0) (0.0 0.0 -0.7071 0.7071))))
  
 (defparameter *downward-look-coordinate*
-  (make-pose "base_footprint" '((0.65335 0.076 0.758) (0 0 0 1))))
+  (make-pose "base_footprint" '((0.65335 0.076 1) (0 0 0 1))))
  
 (defparameter *base-pose-near-counter*
   (make-pose "map" '((-0.15 2 0) (0 0 -1 0))))
@@ -11,10 +11,10 @@
   (make-pose "map" '((-0.8 2 0.9) (0 0 0 1))))
 
 (defparameter *left-downward-look-coordinate*
-  (make-pose "base_footprint" '((0.65335 0.76 0.758) (0 0 0 1))))
+  (make-pose "base_footprint" '((0.65335 0.76 1) (0 0 0 1))))
  
 (defparameter *right-downward-look-coordinate*
-  (make-pose "base_footprint" '((0.65335 -0.76 0.758) (0 0 0 1))))
+  (make-pose "base_footprint" '((0.65335 -0.76 1) (0 0 0 1))))
 
 (defparameter *base-pose-near-oposite-counter*
   (make-pose "map" '((-1.447 0.15 0.0) (0.0 0.0 0.7071 0.7071))))
@@ -162,7 +162,7 @@
         
         (perform (a motion
                     (type moving-torso) 
-                    (joint-angle 0.2)))
+                    (joint-angle 0.3)))
         (park-arms))
  
     (let ((?perceived-bottle (perceive-bottle))
