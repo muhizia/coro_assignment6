@@ -162,7 +162,7 @@
         
         (perform (a motion
                     (type moving-torso) 
-                    (joint-angle 0.3)))
+                    (joint-angle 0.2)))
         (park-arms))
  
     (let ((?perceived-bottle (perceive-bottle))
