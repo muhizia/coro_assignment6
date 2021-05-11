@@ -208,3 +208,67 @@
                                           (pose ?looking-location)))))
                   (cpl:retry))
                 (cpl:fail 'object-unreachable))))
+
+(defparameter *base-pose-near-table-towards-island*
+  (make-pose "map" '((-1.447d0 0.150d0 0.0d0) (0.0d0 0.0d0 0.7071d0 0.7071d0))))
+ 
+(defparameter *base-pose-near-sink-surface* 
+  (make-pose "map" '((0.700000 0.650000 0.00000) (0.00000 0.00000 0 1))))
+ 
+(defun move-bottle (bottle-spawn-pose)
+  (spawn-object bottle-spawn-pose)
+  (with-simulated-robot
+    (let ((?navigation-goal *base-pose-near-table*))
+      (cpl:par
+        ;; Moving the robot near the table.
+        (perform (an action
+                     (type going)
+                     (target (a location 
+                                (pose ?navigation-goal)))))
+        (perform (a motion
+                    (type moving-torso) 
+                    (joint-angle 0.3)))
+        (park-arms)))
+ 
+    (let ((?perceived-bottle
+ 
+            (let ((?possible-base-poses `(,*base-pose-near-counter*
+                                          ,*base-pose-near-sink-surface*))
+                  (?current-base-pose *base-pose-near-table*))
+ 
+              (handle-failure (or object-nowhere-to-be-found
+                                  object-unreachable)
+ 
+                  ((find-object :bottle))
+ 
+                (when (first ?possible-base-poses)
+                  (print "Changing the base to a new location to try finding the object")
+                  (setf ?current-base-pose (first ?possible-base-poses))
+                  (setf ?possible-base-poses (rest ?possible-base-poses))
+                  (perform (an action
+                               (type going)
+                               (target (a location
+                                          (pose ?current-base-pose)))))
+                  (cpl:retry))
+                (print "Exhausted all the locations to search. Cannot find the object")
+                (cpl:fail 'object-unreachable))))
+ 
+          (?grasping-arm :right))
+      ;; We update the value of ?grasping-arm according to what the method used
+      (setf ?grasping-arm (pick-up-object ?perceived-bottle ?grasping-arm))
+      (park-arm ?grasping-arm)
+      ;; Moving the robot near the counter.
+      (let ((?nav-goal *base-pose-near-counter*))
+        (perform (an action
+                     (type going)
+                     (target (a location 
+                                (pose ?nav-goal))))))
+       ;; Setting the object down on the counter
+      (let ((?drop-pose *final-object-destination*))
+        (perform (an action
+                     (type placing)
+                     (arm ?grasping-arm)
+                     (object ?perceived-bottle)
+                     (target (a location 
+                                (pose ?drop-pose))))))
+      (park-arm ?grasping-arm))))
