@@ -215,7 +215,7 @@
 (defparameter *base-pose-near-sink-surface* 
   (make-pose "map" '((0.700000 0.650000 0.00000) (0.00000 0.00000 0 1))))
  
-(defun move-bottle (bottle-spawn-pose)
+(defun move-bottle12 (bottle-spawn-pose)
   (spawn-object bottle-spawn-pose)
   (with-simulated-robot
     (let ((?navigation-goal *base-pose-near-table*))
