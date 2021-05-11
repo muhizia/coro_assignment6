@@ -188,7 +188,7 @@
       (park-arm ?grasping-arm))))
 
 (defun perceive-bottle ()
-(let ((?possible-look-locations `(,*base-pose-near-counter* ,*base-pose-near-and-next-counter*))
+(let ((?possible-look-locations `(,*base-pose-near-and-next-counter*))
                   (?looking-location *base-pose-near-table*))
                   (perform (an action
                      (type going)
