@@ -32,7 +32,7 @@
                     (joint-angle 0.3)))
         (park-arms))
  
-    (let ((?perceived-bottle (perceive-bottle))
+    (let* ((?perceived-bottle (perceive-bottle))
  
           (?grasping-arm (get-preferred-arm ?perceived-bottle)))
       ;; We update the value of ?grasping-arm according to what the method used
