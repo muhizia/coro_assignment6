@@ -53,7 +53,7 @@
 (defun spawn-bottle2 ()
  (unless (assoc :bottle btr::*mesh-files*)
    (add-objects-to-mesh-list))
- (btr-utils:spawn-object 'bottle-1 :bottle :color '(1 0 0) :pose '((-2.2 -0.9 0.860) (0 0 0 1)))
+ (btr-utils:spawn-object 'bottle-1 :bottle :color '(1 0 0) :pose '((-1.8 -0.9 0.860) (0 0 0 1)))
  (btr:simulate btr:*current-bullet-world* 10))
  
  
