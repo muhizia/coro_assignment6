@@ -1,4 +1,4 @@
-(defun move-bottle3 (bottle-spawn-pose)
+(defun move-bottle4 (bottle-spawn-pose)
   (spawn-object bottle-spawn-pose)
   (with-simulated-robot
       (cpl:par
@@ -34,9 +34,8 @@
 
 (defun pick-up-object2 (?perceived-object ?grasping-arm)
   (let* ((?possible-grasps '(:left-side :right-side :front :back))
-         (?grasp (first ?possible-grasps)))
+         (?grasp (first ?possible-grasps))(a (make-array '(3))))
     (setf ?possible-grasps (rest ?possible-grasps))
-    (setq a (make-array '(3)))
     (setf (aref a 0) (aref ?perceived-object 0))
     (setf (aref a 1) (aref ?perceived-object 2))
     (setf (aref a 2) (aref ?perceived-object 1))
