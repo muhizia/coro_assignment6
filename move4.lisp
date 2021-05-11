@@ -37,7 +37,7 @@
          (?grasp (first ?possible-grasps))(a (make-array '(3))))
     (setf ?possible-grasps (rest ?possible-grasps))
     (setf (aref a 0) (aref ?perceived-object 0))
-    (setf (aref a 1) (aref ?perceived-object 2))
+    (setf (aref a 1) -(aref ?perceived-object 2))
     (setf (aref a 2) (aref ?perceived-object 1))
     (cpl:with-retry-counters ((arm-change-retry 1))
       ;; Outer handle failure handling arm change
