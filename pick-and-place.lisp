@@ -186,8 +186,10 @@
                      (target (a location 
                                 (pose ?drop-pose))))))
       (park-arm ?grasping-arm))))
-
+;; perceive-bottle function to handle failure of when the robot can't find the bottle in on location 
+;; it checks the next location
 (defun perceive-bottle ()
+;; 
 (let ((?possible-look-locations `(,*base-pose-near-and-next-counter*))
                   (?looking-location *base-pose-near-table*))
                   (perform (an action
