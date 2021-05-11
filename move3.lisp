@@ -1,6 +1,6 @@
 ;; Modified find-object which changes torso link during perception failure
  
-(defun find-object3 (?object-type)
+(defun find-object2 (?object-type)
   (let* ((possible-look-directions `(,*downward-look-coordinate*
                                      ,*left-downward-look-coordinate*
                                      ,*right-downward-look-coordinate*))
@@ -65,7 +65,7 @@
       (cpl:fail 'object-nowhere-to-be-found))))
 
 
-(defun move-bottle2 (bottle-spawn-pose)
+(defun move-bottle3 (bottle-spawn-pose)
   (spawn-object bottle-spawn-pose)
   (with-simulated-robot
       (cpl:par
