@@ -1,6 +1,6 @@
 ;; Modified find-object which changes torso link during perception failure
  
-(defun find-object2 (?object-type)
+(defun find-object3 (?object-type)
   (let* ((possible-look-directions `(,*downward-look-coordinate*
                                      ,*left-downward-look-coordinate*
                                      ,*right-downward-look-coordinate*))
