@@ -20,7 +20,7 @@
   (make-pose "map" '((-1.447 0.15 0.0) (0.0 0.0 0.7071 0.7071))))
 
 (defparameter *base-pose-near-and-next-counter*
-  (make-pose "map" '((-0.3 1 0) (0 0 -1 0))))
+  (make-pose "map" '((-0.15 1 0) (0 0 -1 0))))
 
 (defun move-bottle (bottle-spawn-pose)
   (spawn-object bottle-spawn-pose)
@@ -233,7 +233,8 @@
     (let ((?perceived-bottle
  
             (let ((?possible-base-poses `(,*base-pose-near-counter*
-                                          ,*base-pose-near-sink-surface*))
+                                          ,*base-pose-near-sink-surface*
+                                          ,*base-pose-near-and-next-counter*))
                   (?current-base-pose *base-pose-near-table*))
  
               (handle-failure (or object-nowhere-to-be-found
