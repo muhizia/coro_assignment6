@@ -36,20 +36,21 @@
   (let* ((?possible-grasps '(:left-side :right-side :front :back))
          (?grasp (first ?possible-grasps))(a (make-array '(3))))
     (setf ?possible-grasps (rest ?possible-grasps))
-    (setf (aref a 0) (aref ?perceived-object 0))
-    (setf (aref a 1) -(aref ?perceived-object 2))
-    (setf (aref a 2) (aref ?perceived-object 1))
     (cpl:with-retry-counters ((arm-change-retry 1))
       ;; Outer handle failure handling arm change
       (handle-failure object-unreachable
           ;; Iner handle-failure handling grasp change
           ((handle-failure (or manipulation-pose-unreachable gripper-closed-completely)
                ;; Try to perform the pick up
+                (setf (aref a 0) (aref ?grasp 0))
+                (setf (aref a 1) (- 0 (aref ?grasp 2)))
+                (setf (aref a 2) (aref ?grasp 1))
                ((perform (an action
                              (type picking-up)
                              (arm ?grasping-arm)
-                             (grasp ?grasp)
-                             (object a))))
+                             (grasp a)
+                             (object ?perceived-object))))
+                             
              ;; When pick-up fails this block gets executed
              (format t "Grasp failed! Error: ~a~%Grasp: ~a~%Arm: ~a~%"
                      e ?grasp ?grasping-arm)
