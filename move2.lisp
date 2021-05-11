@@ -34,7 +34,7 @@
  
     (let ((?perceived-bottle (perceive-bottle))
  
-          (?grasping-arm (get-preferred-arm perceived-bottle)))
+          (?grasping-arm (get-preferred-arm ?perceived-bottle)))
       ;; We update the value of ?grasping-arm according to what the method used
       (setf ?grasping-arm (pick-up-object ?perceived-bottle ?grasping-arm))
       (park-arm ?grasping-arm)
